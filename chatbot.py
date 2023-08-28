@@ -3,7 +3,7 @@ import requests
 
 # Configure OpenAI
 openai.api_key = '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'  
-weather_api_key = '1c223b1c1c544d91831152821231807'
+#weather_api_key = '1c223b1c1c544d91831152821231807'
 
 import openai
 
