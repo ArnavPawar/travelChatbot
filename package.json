@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "bardapi": "^1.0.4",
+    "openai": "^4.8.0"
+  }
+}
