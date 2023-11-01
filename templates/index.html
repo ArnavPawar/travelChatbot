@@ -1,344 +1,243 @@
 <!DOCTYPE html>
-
-<html>
-  <head>
-    <title>LipSync Video</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plotka The Travel Chatbox</title>
     <style>
-                  /* Set up a flex container */
-                  .flex-container {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                    width: 100vw;
-                    font-family: Arial, sans-serif;
+        body {
+            text-align: center;
+        }
 
-            /*         color: #f8f9fa; /* Light text for dark theme */ */
-            /*         background-color: #1c1c1c; /* Dark grey background */ */
+        .header {
+            margin-bottom: 20px;
+        }
 
-                    /*         color: #444;
-                    background-color: #F8F9FA; */
-                  }
+        .chat-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            display: inline-block;
+            text-align: left;
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
+        }
 
-                  /* Add some space between elements */
-                  .flex-container > * {
-                    margin-bottom: 10px;
-                  }
+        .messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
 
-                  @keyframes fadein {
-                    from { opacity: 0; }
-                    to   { opacity: 1; }
-                  }
+        .messages li {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 10px;
+        }
+        .bot-message {
+            background-color: #E6E6E6; /* Light gray for bot's messages */
+        }
+        .user-message {
+            background-color: #007AFF; /* Light green for user's messages */
+        }
 
+        .user-input {
+            width: calc(100% - 20px); /* Set width to match chat container and subtract padding */
+            padding: 5px;
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
 
+        .input-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 630px;
+            width: 30%; /* Make the input box take full width of the chat container */
+        }
 
+        .submit-button, .clear-button {
+            padding: 5px 10px;
+        }
 
-                  #text-input {
-                    width: 70%; /* Shorter width */
-                    height: 10%; /* Taller height */
-                    padding: 10px;
-                    border: none;
-                    display: flex; /* need to be changed by view button */
-                    border-radius: 20px; /* Rounded edges */
-                    outline: none;
-                    font-size: 20px;
-                    resize:none;
-                  }
+        .responses {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .daily-planner,
+        .packing-list {
+            width: calc(30% - 20px); /* Adjust width as needed */
+            height: 400px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin: 0 10px;
+            overflow-y: auto;
+            display: inline-block;
+            text-align: left;
+        }
 
-                  .button {
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 20px; /* Rounded buttons */
-                    color: white;
-                    cursor: pointer;
-                    outline: none;
-                    transition: background 0.3s ease-in-out; /* Smooth transition */
-                    font-size: 18px;
-                  }
+        h2 {
+            text-align: center;
+        }
 
-                  #submit-button {
-                    background: #007bff;
-                    display: flex;
-                  }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-                  #submit-button:hover {
-                    background: #0056b3;
-                  }
-
-                  /* Styles for the microphone button */
-                  .mic-button {
-                    background: white;
-                    border: none;
-                    border-radius: 60%; /* Circular button */
-                    width: 50px;
-                    height: 50px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    cursor: pointer;
-                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add some shadow */
-                    transition: background 0.3s ease-in-out; /* Smooth transition */
-                  }
-
-                  .mic-button:hover,
-                  .mic-button:active {
-                    background: #ddd;
-                  }
-
-                  .mic-icon {
-                    width: 50%;
-                    height: 50%;
-                  }
-
-
-                  #video,
-                  #text-input,
-                  #submit-button {
-                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add some shadow */
-                    transition: box-shadow 0.3s ease-in-out; /* Smooth transition */
-                  }
-
-                  #video:hover,
-                  #text-input:hover,
-                  #submit-button:hover {
-                    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2); /* Add some shadow */
-                  }
-
-                  /* CSS for large screens */
-                  @media (min-width: 800px) {
-                      .video-container {
-                          width: 70%;
-                          height: 70%;
-                      }
-                  }
-
-                  /* CSS for small screens */
-                  @media (max-width: 800px) {
-                      .video-container {
-                          width: 100%;
-                          height: auto;
-                      }
-                  }
-
-
-            /*       Dark theme style//------------------------------------------------------------------------------ */
-                  /* Dark theme styles */
-                  body.dark-theme {
-                    color: #f8f9fa;
-/*                     background-color: #1c1c1c; */
-                    background-color: #F8F9FA
-                  }
-
-                  /* Light theme styles */
-                  body.light-theme {
-                    color: #444;
-                    background-color: #f8f9fa;
-                  }
-
-                  /* Styles for the toggle switch */
-                  .theme-toggle-container {
-                    position: absolute;
-                    top: 10px;
-                    right: 30px;
-                  }
-
-                  .theme-switch {
-                    position: relative;
-                    display: inline-block;
-                    width: 60px;
-                    height: 34px;
-                  }
-
-                  .theme-switch input {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                  }
-
-                  .view-container {
-                    position: absolute;
-                    top: 120px;
-                    right: 30px;
-                  }
-
-                  .slider {
-                    position: absolute;
-                    cursor: pointer;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: #ccc;
-                    -webkit-transition: 0.4s;
-                    transition: 0.4s;
-                  }
-
-                  .slider:before {
-                    position: absolute;
-                    content: "";
-                    height: 26px;
-                    width: 26px;
-                    left: 4px;
-                    bottom: 4px;
-                    background-color: white;
-                    -webkit-transition: 0.4s;
-                    transition: 0.4s;
-                  }
-
-                  input:checked + .slider {
-                    background-color: #2196f3;
-                  }
-
-                  input:checked + .slider:before {
-                    -webkit-transform: translateX(26px);
-                    -ms-transform: translateX(26px);
-                    transform: translateX(26px);
-                  }
-
-                  /* Rounded sliders */
-                  .slider.round {
-                    border-radius: 34px;
-                  }
-
-                  .slider.round:before {
-                    border-radius: 50%;
-                  }
-
-      /*        Chat History and Change personality button /////////////////////////////////////////////// */
-                 .chat-history {
-                    width: 82%; /* same width as text input */
-                    height: 200px; /* you can adjust the height as needed */
-                    overflow-y: auto; /* make it scrollable vertically */
-                    display: flex; /* need to change for view button */
-                    flex-direction: column;
-                    gap: 10px;
-                    border: 1px solid #ccc;
-                    padding: 10px;
-                    margin-bottom: 10px; /* space between chat history and text input */
-
-                    background: linear-gradient(to right, #f8f9fa, #e9ecef); /* Add gradient background */
-                    border-radius: 10px; /* Rounded corners for chat history */
-                  }
-
-                  .chat-history .user-message,
-                  .chat-history .bot-message {
-                    padding: 5px;
-                    border-radius: 5px;
-
-                    color: #333; /* Darker text color */
-                  }
-
-                  .chat-history .user-message {
-                    align-self: flex-end;
-                    background-color: #d1ecf1;
-                  }
-
-                  .chat-history .bot-message {
-                    align-self: flex-start;
-                    background-color: #d4edda;
-                  }
-
-
-                .button-container {
-                  display: flex; /* need to change for view button */
-                  justify-content: center;
-                  align-items: center;
-                  padding: 0px;
-/*                   display:none; */
-                  gap: 20px; /* adjust as needed to add some space between the buttons */
-                }
-      /*         /////////////////////////////////////////////// */
-
-                #begin-button {
-                background: #ffffff; /* Set the button color to white */
-                border: none;
-                border-radius: 50%; /* Make the button round */
-                width: 100px; /* Fixed width and height to make a perfect circle */
-                height: 100px;
-                display: flex; /* Center the icon in the button */
-                justify-content: center;
-                align-items: center;
-                cursor: pointer;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-                transition: background 0.3s ease-in-out; /* Smooth transition */
-                color: #000000; /* Set the text color to black */
-            
-              }
-
-              #begin-button:hover {
-                background: #ddd; /* Set a different color for hover */
-                box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); /* Make the shadow more pronounced on hover */
-              }
-
-
-
-           
-      
-              #clear-conversation-button {
-              background: #6c757d; /* Grey background color */
-              color: #ffffff; /* White text */
-              }
-
-              #clear-conversation-button:hover {
-              background: #5a6268; /* Slightly darker grey for hover effect */
-              }
+        ul li {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
     </style>
-  </head>
-  <body class="dark-theme">
-    <div class="flex-container">
-       <img
+</head>
+<body>
+    <div class="header">
+        <img
           src="https://cdn.glitch.global/65ce44cc-ad85-4c7a-b33b-520e8d69ba07/plotka_logo.png?v=1698217756131"
           class="illustration"
           alt="Editor illustration"
           title="Click the image!"
-          
         />
-
-      
-
-      <div id="chat-history" class="chat-history">
-        <!-- Chat history will be added here -->
-        
-      </div>
-
-      <textarea
-        id="text-input"
-        type="text"
-        placeholder="Type here to talk to the avatar"
-      ></textarea>
-
-      <div class="button-container">
-          <button id="clear-conversation-button" class="button">Clear</button>
-        <button id="submit-button" class="button">Submit</button>
-
-        <!-- Microphone button -->
-        <button id="voice-input-button" class="mic-button">
-          <img
-            class="mic-icon"
-            src="https://pic.onlinewebfonts.com/svg/img_244689.png"
-            alt="Microphone Icon"
-          />
-        </button>
-         <div class="theme-toggle-container">
-      <button id="begin-button" class="button">Begin</button>
-      </div>
-
-        
-
-      </div>
     </div>
+  </div>
+  <div class="chat-container" id="chatContainer">
+      <ul class="messages" id="messages"></ul>
+  </div>
+  <div class="input-box">
+      <input type="text" class="user-input" id="userInput" placeholder="Type a message...">
+      <button class="submit-button" onclick="sendMessage()">Submit</button>
+      <button class="clear-button" onclick="clearChat()">Clear Chat</button>
+  </div>
 
-    <!--     <div class="theme-toggle-container">
-      <label class="theme-switch" for="checkbox">
-        <input type="checkbox" id="checkbox" />
-        <div class="slider round"></div>
-      </label>
-    </div> -->
+  <div class="responses" id="responses"></div>
+
+  <!-- New box on the right labeled "Packing List" -->
+  <div class="packing-list">
+      <h2>Packing List</h2>
+      <ul id="packingList"></ul>
+  </div>
+
+  <!-- New box on the left labeled "Daily Planner" -->
+  <div class="daily-planner">
+      <h2>Daily Planner</h2>
+      <ul id="dailyPlanner"></ul>
+  </div>
+
+    <script>
+        function scrollToBottom() {
+            var chatContainer = document.getElementById("chatContainer");
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        var currentQuestion = 0;
+        var questions = [
+            "Where would you like to go?",
+            "What city and/or address are you planning on staying?",
+            "What time of month are you going?",
+            "How long are you planning on staying?",
+            "What is your budget range?",
+            "What are some of your interests?",
+            "Where would you like to stay?",
+            "Who and how many people are you staying with?",
+            "What do you have planned already?",
+            "Add any other info that you think is important for the trip?"
+        ];
+
+        var messagesContainer = document.getElementById("messages");
+        var responsesContainer = document.getElementById("responses");
+        var userResponses = [];
+
+        function displayQuestion() {
+            var message = document.createElement("li");
+            message.classList.add("bot-message"); // Add bot-message class
+
+            message.innerText = "Bot: " + questions[currentQuestion];
+            currentQuestion++;
+
+            messagesContainer.appendChild(message);
+        }
+
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            var userMessage = document.createElement("li");
+            userMessage.classList.add("user-message"); // Add user-message class
+
+            userMessage.innerText = "User: " + userInput;
+            messagesContainer.appendChild(userMessage);
+
+            if (currentQuestion < questions.length) {
+                userResponses.push(userInput); // Store user response
+                displayQuestion();
+                // currentQuestion++;
+            } else {
+                displayFinalOutput(); // If all questions are answered, display final output
+            }
+
+            document.getElementById("userInput").value = "";
+            scrollToBottom();
+        }
+
+        function clearChat() {
+            messagesContainer.innerHTML = "";
+            currentQuestion = 0;
+            userResponses = [];
+            displayQuestion();
+            responsesContainer.innerHTML = ""; // Clear previous responses
+            scrollToBottom();
+        }
+
+        const { Configuration, OpenAIApi } = require("openai");
+        const configuration = new Configuration({
+          apiKey: "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",
+        });
+        const openai = new OpenAIApi(configuration);
 
 
+        function displayFinalOutput() {
+            var finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
+            
+            userResponses.forEach(function(response, index) {
+                finalOutput += questions[index] + ": " + response + "\n";
+            });
 
-    <script src="main.js"></script>
+            finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
 
-  </body>
+            var finalOutputMessage = document.createElement("li");
+            finalOutputMessage.innerText = "Bot: " + finalOutput;
+            messagesContainer.appendChild(finalOutputMessage);
+        }
+
+        let gptResponse;
+            gptResponse = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            //messages: ["role":"user","content":message+extra_prompt],
+            messages: [{"role": "user", "content": question}],
+            
+            max_tokens: 200,
+          });
+
+          const gptText = gptResponse.data.choices[0].message.content.trim();
+
+          if (!gptText) {
+            console.error("Error: Empty response from OpenAI API");
+            res.status(500).json({ error: "Empty response from OpenAI API" });
+            return;
+          }
+          console.log("GPT-3 Response:", gptText);
+
+
+        document.getElementById("userInput").addEventListener("keydown", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        displayQuestion(); // Display first question on page load
+    </script>
+</body>
 </html>
