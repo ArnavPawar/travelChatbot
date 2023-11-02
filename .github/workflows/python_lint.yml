@@ -14,6 +14,6 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4.7.1
         with:
-          python-version: 3.12.10
+          python-version: 3.12.0
       - name: Flake8 action
         uses: suo/flake8-github-action@v1
