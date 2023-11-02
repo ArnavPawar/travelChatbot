@@ -10,6 +10,7 @@ cookie_dict = {
     # Any cookie values you want to pass to the session object.
 }
 
+
 @app.route('/plan_trip', methods=['POST'])
 def plan_trip():
     try:
@@ -28,8 +29,26 @@ def plan_trip():
 
         bard = BardCookies(cookie_dict=cookie_dict)
         result = bard.get_answer(
-            f"Can you plan a trip based on all of these questions and answers: {destination} {city} {departure_date} {return_date} {budget} {accommodation} {activities} {activities} {people} {planned} {other_info}"
-            " Also, can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location"
+            f"""Can you plan a trip based on all of these questions and answers:
+            {destination}
+            {city}
+            {departure_date}
+            {return_date}
+            {budget}
+            {accommodation}
+            {activities}
+            {activities}
+            {people}
+            {planned}
+            {other_info}
+             Also, can you plan this trip in this order: ONLY 1 Daily
+            schedule, with links for each activity and an estimated price
+            for the activity <for everyone(do not provide more than
+            1 itinerary on the output), ONE A packing list, after
+            providing a daily activity and packing list
+            provide 10 hotel or Airbnb recommendations for the whole trip
+            with links and lastly 10 recommended restaurant locations
+            for the whole trip based on the given information and location"""
         )['contents']
 
         return jsonify({"result": result})
@@ -37,8 +56,10 @@ def plan_trip():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+
 # Configure OpenAI
 openai.api_key = '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'
+
 
 def chat_with_bot(prompt):
     response = openai.Completion.create(
@@ -47,6 +68,7 @@ def chat_with_bot(prompt):
         max_tokens=50
     )
     return response.choices[0].text.strip()
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -64,6 +86,7 @@ def chat():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
 
 if __name__ == '__main__':
     app.run(debug=True)

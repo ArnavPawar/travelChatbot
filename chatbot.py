@@ -2,11 +2,8 @@ import openai
 import requests
 
 # Configure OpenAI
-openai.api_key = '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'  
+openai.api_key = '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'
 weather_api_key = '1c223b1c1c544d91831152821231807'
-
-import openai
-
 
 
 def chat_with_bot(prompt):
@@ -16,6 +13,7 @@ def chat_with_bot(prompt):
         max_tokens=50  # You can adjust the response length
     )
     return response.choices[0].text.strip()
+
 
 print("Chatbot: Hello! I'm your friendly chatbot. How can I assist you today?")
 
