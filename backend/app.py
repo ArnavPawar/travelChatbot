@@ -14,6 +14,7 @@ def scrape_flights(departure, destnation, startdate):
     driver.get(url)
     popup_window = '//*[@id="cookies_accept"]'
     driver.find_element("xpath", (popup_window)).click()
+
     driver.execute_script('window.scrollBy(0,1700)')
     sleep(2)
     flight_rows = driver.find_elements("xpath", ('//*[@data-test="ResultCardWrapper"]'))

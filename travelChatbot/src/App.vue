@@ -30,6 +30,17 @@
       <ul ref="dailyPlanner"></ul>
     </div>
   </div>
+    <!-- New box on the left labeled "Daily Planner" for Flights -->
+  <div class="daily-planner">
+    <h2>Flights</h2>
+    <ul ref="flightPlanner"></ul>
+  </div>
+
+  <!-- New box on the right labeled "Restaurants" -->
+  <div class="daily-planner">
+    <h2>Restaurants</h2>
+    <ul ref="restaurantPlanner"></ul>
+  </div>
 </template>
 
 <script>
@@ -39,11 +50,71 @@ export default {
   setup() {
 
     const ws = useWebSocket(handleMessage);
-    function handleMessage(message) {
-      const response = JSON.parse(message.data);
-        if(response.type === "restaurants"){console.log('restaurant message',response.restaurants)}
-                if(response.type === "flights"){console.log('flight message',response.flights)}
+
+    const dailyPlanner = ref(null);
+    const flightPlanner = ref(null);
+    const restaurantPlanner = ref(null);
+
+    const flightMessages = ref([]);
+    const restaurantMessages = ref([]);
+    const packingList = ref(null);
+
+const updateDailyPlanner = (messageTypes) => {
+  const dailyPlannerElement = dailyPlanner.value;
+  const flightPlannerElement = flightPlanner.value;
+  const restaurantPlannerElement = restaurantPlanner.value;
+  dailyPlannerElement.innerHTML = "";
+  flightPlannerElement.innerHTML = "";
+  restaurantPlannerElement.innerHTML = "";
+
+  messageTypes.forEach((messageType) => {
+    if (messageType === "restaurants") {
+      restaurantMessages.value.forEach((restaurant) => {
+        const listItem = document.createElement("li");
+        listItem.innerText = `Restaurant: ${restaurant.name}, Rating: ${restaurant.rating}, Reviews: ${restaurant.reviews}`;
+        dailyPlannerElement.appendChild(listItem);
+
+        // Create clones of listItem for other elements
+        const restaurantListItem = listItem.cloneNode(true);
+        restaurantPlannerElement.appendChild(restaurantListItem);
+
+        const flightListItem = listItem.cloneNode(true);
+        flightPlannerElement.appendChild(flightListItem);
+      });
+    } else if (messageType === "flights") {
+      flightMessages.value.forEach((flight) => {
+        const listItem = document.createElement("li");
+        listItem.innerText = `Flight: Departure from ${flight.departure_airport} at ${flight.departure_time}, Arrival at ${flight.arrival_airport} at ${flight.arrival_time}, Price: ${flight.price}`;
+        dailyPlannerElement.appendChild(listItem);
+
+        // Create clones of listItem for other elements
+        const restaurantListItem = listItem.cloneNode(true);
+        restaurantPlannerElement.appendChild(restaurantListItem);
+
+        const flightListItem = listItem.cloneNode(true);
+        flightPlannerElement.appendChild(flightListItem);
+      });
     }
+  });
+};
+
+
+function handleMessage(message) {
+  const response = JSON.parse(message.data);
+
+  if (response.type === "restaurants") {
+    console.log('restaurant message', response.restaurants);
+    restaurantMessages.value.push(...response.restaurants);
+  }
+
+  if (response.type === "flights") {
+    console.log('flight message', response.flights);
+    flightMessages.value.push(...response.flights);
+  }
+
+  // updateDailyPlanner
+  updateDailyPlanner(["restaurants", "flights"]);
+}
 
 
     const currentQuestion = ref(0);
@@ -59,10 +130,18 @@ export default {
     //   "What do you have planned already?",
     //   "Add any other info that you think is important for the trip?"
     // ];
-    const questions = ["Start Location?",
-    "Destination?",
-    "Start Time?",
-    "End Time?",
+
+    
+    // const questions = ["Start Location?new-york-city-new-york-united-states",
+    // "Destination?los-angeles-california-united-states",
+    // "Start Time?2023-11-28",
+    // "End Time?2023-11-30",
+    // "Number of Traveler?"
+    // ];
+    const questions = ["new-york-city-new-york-united-states",
+    "los-angeles-california-united-states",
+    "2023-11-28",
+    "2023-11-30",
     "Number of Traveler?"
     ];
     const userResponses = ref([]);
@@ -78,7 +157,7 @@ export default {
     const displayQuestion = () => {
       const message = document.createElement("li");
       message.classList.add("bot-message");
-      message.innerText = "Bot: " + questions[currentQuestion.value];
+      message.innerText = questions[currentQuestion.value];
       currentQuestion.value++;
       messages.value.appendChild(message);
     };
@@ -100,6 +179,14 @@ export default {
 
         // Log user inputs to the console
         console.log('User Inputs:', userInputs.value);
+
+        // Add user inputs to the Packing List
+        userInputs.value.forEach((input, index) => {
+          const listItem = document.createElement("li");
+          listItem.innerText = `${input}`;
+          packingList.value.appendChild(listItem);
+        });
+        
       }
 
       userInput.value = "";
@@ -178,7 +265,12 @@ export default {
       messages,
       responses,
       userInputs,
-      handleSendRestaurant
+      handleSendRestaurant,
+      updateDailyPlanner,
+      dailyPlanner,
+      flightPlanner,
+      restaurantPlanner,
+      packingList,
     };
   },
 };
