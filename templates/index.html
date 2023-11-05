@@ -126,7 +126,6 @@
       <h2>Daily Planner</h2>
       <ul id="dailyPlanner"></ul>
   </div>
-
     <script>
         function scrollToBottom() {
             var chatContainer = document.getElementById("chatContainer");
@@ -190,13 +189,6 @@
             scrollToBottom();
         }
 
-        const { Configuration, OpenAIApi } = require("openai");
-        const configuration = new Configuration({
-          apiKey: "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",
-        });
-        const openai = new OpenAIApi(configuration);
-
-
         function displayFinalOutput() {
             var finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
             
@@ -207,28 +199,30 @@
             finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
 
             var finalOutputMessage = document.createElement("li");
+
             finalOutputMessage.innerText = "Bot: " + finalOutput;
-            messagesContainer.appendChild(finalOutputMessage);
+
+
+            response = fetch('/', { // Change the endpoint to request text
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text_prompt: finalOutput
+                })
+            })
+            .then(response => response.json()) // Convert the response to JSON
+            .then(data => {
+                var arnavString = data.trip; // Extract the 'arnav' value from the response
+                var arnavMessage = document.createElement("li");
+                arnavMessage.innerText = "Bot: " + arnavString;
+                messagesContainer.appendChild(arnavMessage);
+                scrollToBottom();
+            });
+            // messagesContainer.appendChild(response.arnav);
+
         }
-
-        let gptResponse;
-            gptResponse = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            //messages: ["role":"user","content":message+extra_prompt],
-            messages: [{"role": "user", "content": question}],
-            
-            max_tokens: 200,
-          });
-
-          const gptText = gptResponse.data.choices[0].message.content.trim();
-
-          if (!gptText) {
-            console.error("Error: Empty response from OpenAI API");
-            res.status(500).json({ error: "Empty response from OpenAI API" });
-            return;
-          }
-          console.log("GPT-3 Response:", gptText);
-
 
         document.getElementById("userInput").addEventListener("keydown", function(event) {
             if (event.keyCode === 13) {
@@ -238,6 +232,6 @@
         });
 
         displayQuestion(); // Display first question on page load
-    </script>
+      </script>
 </body>
 </html>
