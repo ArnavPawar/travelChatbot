@@ -33,17 +33,17 @@
 </template>
 
 <script>
-// import { useWebSocket } from './hooks';
-// import { ref } from "vue";
-// const ws = useWebSocket(handleMessage);
-//     const text = ref("");
-//     function handleMessage(e) {
-//             // console.log('WebSocket message',e.data)
-//             text.value = e.data
-//     }
 import { ref, onMounted } from "vue";
+import { useWebSocket } from './hooks';
 export default {
   setup() {
+
+    const ws = useWebSocket(handleMessage);
+    function handleMessage(e) {
+        console.log('WebSocket message',e.data)
+    }
+
+
     const currentQuestion = ref(0);
     // const questions = [
     //   "Where would you like to go?",
@@ -127,7 +127,7 @@ export default {
       clearChat,
       chatContainer,
       messages,
-      responses,
+      responses
     };
   },
 };
