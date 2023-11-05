@@ -57,9 +57,17 @@ export default {
     //   "What do you have planned already?",
     //   "Add any other info that you think is important for the trip?"
     // ];
-    const questions = ["Where do you want to travel (Get place for restaurants)"];
+    const questions = ["Start Location?",
+    "Destination?",
+    "Start Time?",
+    "End Time?",
+    "Number of Traveler?"
+    ];
     const userResponses = ref([]);
     const userInput = ref("");
+
+    // New ref to store user inputs as a list
+    const userInputs = ref([]);
 
     const scrollToBottom = () => {
       chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
@@ -79,11 +87,17 @@ export default {
       userMessage.innerText = "User: " + userInput.value;
       messages.value.appendChild(userMessage);
 
+      // Add user input to the list
+      userInputs.value.push(userInput.value);
+
       if (currentQuestion.value < questions.length) {
         userResponses.value.push(userInput.value);
         displayQuestion();
       } else {
         displayFinalOutput();
+
+        // Log user inputs to the console
+        console.log('User Inputs:', userInputs.value);
       }
 
       userInput.value = "";
@@ -94,6 +108,10 @@ export default {
       messages.value.innerHTML = "";
       currentQuestion.value = 0;
       userResponses.value = [];
+
+      // Clear the list of user inputs
+      userInputs.value = [];
+
       displayQuestion();
       responses.value.innerHTML = "";
       scrollToBottom();
@@ -127,7 +145,9 @@ export default {
       clearChat,
       chatContainer,
       messages,
-      responses
+      responses,
+
+      userInputs
     };
   },
 };
