@@ -8,9 +8,9 @@ import urllib.parse
 
 app = Flask(__name__)
 
-def scrape_flights(startLocation, destnation, depatureTime, style):
+def scrape_flights(departure, destnation, startdate):
     driver = webdriver.Chrome()
-    url = f'https://www.kiwi.com/us/search/results/{startLocation}/{destnation}/{depatureTime}/{style}'
+    url = f'https://www.kiwi.com/us/search/results/{departure}/{destnation}/{startdate}/no-return'
     driver.get(url)
     popup_window = '//*[@id="cookies_accept"]'
     driver.find_element("xpath", (popup_window)).click()
@@ -49,9 +49,9 @@ def scrape_flights(startLocation, destnation, depatureTime, style):
     driver.quit()
     return lst_prices, lst_time, lst_airport
 
-def scrape_restaurants(location):
+def scrape_restaurants(destnation):
     driver = webdriver.Chrome()
-    url = f'https://www.yelp.com/search?find_desc=Restaurants&find_loc={urllib.parse.quote(location)}'
+    url = f'https://www.yelp.com/search?find_desc=Restaurants&find_loc={urllib.parse.quote(destnation)}'
     driver.get(url)
     driver.execute_script('window.scrollBy(0,4000)')
     sleep(5)
@@ -93,14 +93,13 @@ def scrape_restaurants(location):
     driver.quit()
     return restaurants, ratings, reviews, tags
 
-@app.route('/api/flights', methods=['GET'])
+@app.route('/api/flights', methods=['POST'])
 def get_flight_information():
-    startLocation = request.args.get('startLocation')
-    destnation = request.args.get('destnation')
-    depatureTime = request.args.get('depatureTime')
-    style = request.args.get('style')
+    departure = request.form.get('departure')
+    destnation = request.form.get('destnation')
+    startdate = request.form.get('startdate')
 
-    lst_prices, lst_time, lst_airport = scrape_flights(startLocation, destnation, depatureTime, style)
+    lst_prices, lst_time, lst_airport = scrape_flights(departure, destnation, startdate)
 
     return jsonify({
         "flights": [
@@ -111,14 +110,14 @@ def get_flight_information():
                 "departure_airport": lst_airport[i * 2],
                 "arrival_airport": lst_airport[i * 2 + 1]
             } for i in range(len(lst_prices))
-        ]
+        ],
+        "type" : "flights"
     })
 
-@app.route('/api/restaurants', methods=['GET'])
+@app.route('/api/restaurants', methods=['POST'])
 def get_restaurant_information():
-    location = request.args.get('location')
-
-    restaurants, ratings, reviews, tags = scrape_restaurants(location)
+    destnation = request.form.get('destnation')
+    restaurants, ratings, reviews, tags = scrape_restaurants(destnation)
 
     return jsonify({
         "restaurants": [
@@ -128,7 +127,8 @@ def get_restaurant_information():
                 "reviews": reviews[i],
                 "tags": tags[i]
             } for i in range(10)
-        ]
+        ],
+        "type": "restaurants"
     })
 
 if __name__ == '__main__':

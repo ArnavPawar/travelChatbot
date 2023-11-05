@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bardapi": "^1.0.4",
+    "form-data": "^4.0.0",
     "openai": "^4.8.0"
   }
 }

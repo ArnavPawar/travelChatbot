@@ -39,8 +39,10 @@ export default {
   setup() {
 
     const ws = useWebSocket(handleMessage);
-    function handleMessage(e) {
-        console.log('WebSocket message',e.data)
+    function handleMessage(message) {
+      const response = JSON.parse(message.data);
+        if(response.type === "restaurants"){console.log('restaurant message',response.restaurants)}
+                if(response.type === "flights"){console.log('flight message',response.flights)}
     }
 
 
@@ -117,15 +119,44 @@ export default {
       scrollToBottom();
     };
 
+      const handleSendRestaurant = () =>{
+        if (ws.readyState===1) {
+            ws.send(JSON.stringify({
+                type: "restaurant",
+                // departure: userInputs[0],
+                destnation: userInputs.value[1]
+                // startdate: userInputs[2],
+                // arrivaldate: userInputs[3],
+                // numtraveler: userInputs[4]
+            }));
+            }
+      }
+
+      const handleSendFlight = () =>{
+        if (ws.readyState===1) {
+            ws.send(JSON.stringify({
+                type: "flight",
+                departure: userInputs.value[0],
+                destnation: userInputs.value[1],
+                startdate: userInputs.value[2]
+                // arrivaldate: userInputs[3],
+                // numtraveler: userInputs[4]
+            }));
+            }
+      }
+
+
     const displayFinalOutput = () => {
-      let finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
-      userResponses.value.forEach((response, index) => {
-        finalOutput += questions[index] + ": " + response + "\n";
-      });
-      finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
-      const finalOutputMessage = document.createElement("li");
-      finalOutputMessage.innerText = "Bot: " + finalOutput;
-      messages.value.appendChild(finalOutputMessage);
+      // let finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
+      // userResponses.value.forEach((response, index) => {
+      //   finalOutput += questions[index] + ": " + response + "\n";
+      // });
+      // finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
+      // const finalOutputMessage = document.createElement("li");
+      // finalOutputMessage.innerText = "Bot: " + finalOutput;
+      // messages.value.appendChild(finalOutputMessage);
+      handleSendRestaurant();
+      handleSendFlight();
     };
 
     const chatContainer = ref(null);
@@ -146,8 +177,8 @@ export default {
       chatContainer,
       messages,
       responses,
-
-      userInputs
+      userInputs,
+      handleSendRestaurant
     };
   },
 };

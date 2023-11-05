@@ -1,3 +1,4 @@
+
 const WebSocket = require("ws");
 
 ;((Ws) => {
@@ -39,32 +40,59 @@ const WebSocket = require("ws");
 
     function handleMessage(msg)
     {
-        // handleMessageAnalysis(msg);
-        // return;
         const parsedMsg = JSON.parse(msg);
-        console.log("success")
-        console.log(parsedMsg.id)
-        if(parsedMsg.type === "flights")
+        if(parsedMsg.type === "flight")
         {
-            handleMessageFlights();
+
+            handleMessageFlight(parsedMsg);
+        }
+        if(parsedMsg.type === "restaurant")
+        {
+
+            handleMessageRestaurants(parsedMsg);
         }
         return;
     }
 
-    function handleMessageFlights(parsedMsg) {
+    function handleMessageFlight(parsedMsg) {
         // Extract the username from parsedMsg
         const departure = parsedMsg.departure;
-        const destation = parsedMsg.destation;
-        const date = parsedMsg.date;
-        console.log(departure,destation,date)
+        const destnation = parsedMsg.destnation;
+        const startdate = parsedMsg.startdate;
         // Create a FormData object with the username value
+        const FormData = require('form-data');
         const formData = new FormData();
-        formData.append('departure', username);
-        formData.append('destation', username);
-        formData.append('date', username);
-      
+        formData.append('destnation', destnation);
+        formData.append('departure', departure);
+        formData.append('startdate', startdate);
         // Make a POST request to the API endpoint
-        fetch('http://127.0.0.1:5000/flights', {
+        const fetch = require('node-fetch');
+        fetch('http://127.0.0.1:5000/api/flights', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Response from backend:', data);
+            server.clients.forEach((c) => {
+              c.send(JSON.stringify(data));
+            });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    }
+
+    function handleMessageRestaurants(parsedMsg) {
+        // Extract the username from parsedMsg
+        const destnation = parsedMsg.destnation;
+        // Create a FormData object with the username value
+        const FormData = require('form-data');
+        const formData = new FormData();
+        formData.append('destnation', destnation);
+        // Make a POST request to the API endpoint
+        const fetch = require('node-fetch');
+        fetch('http://127.0.0.1:5000/api/restaurants', {
           method: 'POST',
           body: formData
         })
