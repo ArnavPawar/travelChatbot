@@ -41,75 +41,95 @@
 //             // console.log('WebSocket message',e.data)
 //             text.value = e.data
 //     }
+import { ref, onMounted } from "vue";
 export default {
-  data() {
-    return {
-      currentQuestion: 0,
-      questions: [
-        "Where would you like to go?",
-        "What city and/or address are you planning on staying?",
-        "What time of month are you going?",
-        "How long are you planning on staying?",
-        "What is your budget range?",
-        "What are some of your interests?",
-        "Where would you like to stay?",
-        "Who and how many people are you staying with?",
-        "What do you have planned already?",
-        "Add any other info that you think is important for the trip?"
-      ],
-      userResponses: [],
-      userInput: ""
+  setup() {
+    const currentQuestion = ref(0);
+    // const questions = [
+    //   "Where would you like to go?",
+    //   "What city and/or address are you planning on staying?",
+    //   "What time of month are you going?",
+    //   "How long are you planning on staying?",
+    //   "What is your budget range?",
+    //   "What are some of your interests?",
+    //   "Where would you like to stay?",
+    //   "Who and how many people are you staying with?",
+    //   "What do you have planned already?",
+    //   "Add any other info that you think is important for the trip?"
+    // ];
+    const questions = ["Where do you want to travel (Get place for restaurants)"];
+    const userResponses = ref([]);
+    const userInput = ref("");
+
+    const scrollToBottom = () => {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
     };
-  },
-  methods: {
-    scrollToBottom() {
-      this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
-    },
-    displayQuestion() {
+
+    const displayQuestion = () => {
       const message = document.createElement("li");
       message.classList.add("bot-message");
-      message.innerText = "Bot: " + this.questions[this.currentQuestion];
-      this.currentQuestion++;
-      this.$refs.messages.appendChild(message);
-    },
-    sendMessage() {
+      message.innerText = "Bot: " + questions[currentQuestion.value];
+      currentQuestion.value++;
+      messages.value.appendChild(message);
+    };
+
+    const sendMessage = () => {
       const userMessage = document.createElement("li");
       userMessage.classList.add("user-message");
-      userMessage.innerText = "User: " + this.userInput;
-      this.$refs.messages.appendChild(userMessage);
+      userMessage.innerText = "User: " + userInput.value;
+      messages.value.appendChild(userMessage);
 
-      if (this.currentQuestion < this.questions.length) {
-        this.userResponses.push(this.userInput);
-        this.displayQuestion();
+      if (currentQuestion.value < questions.length) {
+        userResponses.value.push(userInput.value);
+        displayQuestion();
       } else {
-        this.displayFinalOutput();
+        displayFinalOutput();
       }
 
-      this.userInput = "";
-      this.scrollToBottom();
-    },
-    clearChat() {
-      this.$refs.messages.innerHTML = "";
-      this.currentQuestion = 0;
-      this.userResponses = [];
-      this.displayQuestion();
-      this.$refs.responses.innerHTML = "";
-      this.scrollToBottom();
-    },
-    displayFinalOutput() {
+      userInput.value = "";
+      scrollToBottom();
+    };
+
+    const clearChat = () => {
+      messages.value.innerHTML = "";
+      currentQuestion.value = 0;
+      userResponses.value = [];
+      displayQuestion();
+      responses.value.innerHTML = "";
+      scrollToBottom();
+    };
+
+    const displayFinalOutput = () => {
       let finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
-      this.userResponses.forEach((response, index) => {
-        finalOutput += this.questions[index] + ": " + response + "\n";
+      userResponses.value.forEach((response, index) => {
+        finalOutput += questions[index] + ": " + response + "\n";
       });
       finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
       const finalOutputMessage = document.createElement("li");
       finalOutputMessage.innerText = "Bot: " + finalOutput;
-      this.$refs.messages.appendChild(finalOutputMessage);
-    }
+      messages.value.appendChild(finalOutputMessage);
+    };
+
+    const chatContainer = ref(null);
+    const messages = ref(null);
+    const responses = ref(null);
+
+    onMounted(() => {
+      displayQuestion();
+    });
+
+    return {
+      currentQuestion,
+      questions,
+      userResponses,
+      userInput,
+      sendMessage,
+      clearChat,
+      chatContainer,
+      messages,
+      responses,
+    };
   },
-  mounted() {
-    this.displayQuestion(); // Move displayQuestion to the mounted hook
-  }
 };
 </script>
 
