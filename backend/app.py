@@ -77,13 +77,13 @@ def scrape_restaurants(destnation):
         
         temp_rating = elementSoup.find("span", {"class": "css-gutk1c"})
         if temp_rating is None:
-            ratings.append('NaN')
+            ratings.append('')
         else:
             ratings.append(temp_rating.text)
         
         temp_review_num = elementSoup.find("span", {"class": "css-8xcil9"})
         if temp_review_num is None:
-            reviews.append('NaN reviews')
+            reviews.append('')
         else:
             reviews.append(temp_review_num.text)
 

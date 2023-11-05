@@ -18,28 +18,31 @@
     </div>
     <div class="responses" ref="responses"></div>
 
-    <!-- New box on the right labeled "Packing List" -->
-    <div class="packing-list">
-      <h2>Packing List</h2>
-      <ul ref="packingList"></ul>
-    </div>
+    <div class="container">
+      <!-- New box on the right labeled "Packing List" -->
+      <div class="packing-list">
+        <h2>Packing List</h2>
+        <ul ref="packingList"></ul>
+      </div>
 
-    <!-- New box on the left labeled "Daily Planner" -->
-    <div class="daily-planner">
-      <h2>Daily Planner</h2>
-      <ul ref="dailyPlanner"></ul>
-    </div>
-  </div>
-    <!-- New box on the left labeled "Daily Planner" for Flights -->
-  <div class="daily-planner">
-    <h2>Flights</h2>
-    <ul ref="flightPlanner"></ul>
-  </div>
+      <!-- New box on the left labeled "Daily Planner" -->
+      <div class="daily-planner">
+        <h2>Daily Planner</h2>
+        <ul ref="dailyPlanner"></ul>
+      </div>
+  
+      <!-- New box on the left labeled "Flights" -->
+      <div class="daily-planner">
+        <h2>Flights</h2>
+        <ul ref="flightPlanner"></ul>
+      </div>
 
-  <!-- New box on the right labeled "Restaurants" -->
-  <div class="daily-planner">
-    <h2>Restaurants</h2>
-    <ul ref="restaurantPlanner"></ul>
+      <!-- New box on the right labeled "Restaurants" -->
+      <div class="daily-planner">
+        <h2>Restaurants</h2>
+        <ul ref="restaurantPlanner"></ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -59,62 +62,56 @@ export default {
     const restaurantMessages = ref([]);
     const packingList = ref(null);
 
-const updateDailyPlanner = (messageTypes) => {
-  const dailyPlannerElement = dailyPlanner.value;
-  const flightPlannerElement = flightPlanner.value;
-  const restaurantPlannerElement = restaurantPlanner.value;
-  dailyPlannerElement.innerHTML = "";
-  flightPlannerElement.innerHTML = "";
-  restaurantPlannerElement.innerHTML = "";
+    const updateDailyPlanner = (messageTypes) => {
+      const dailyPlannerElement = dailyPlanner.value;
+      const flightPlannerElement = flightPlanner.value;
+      const restaurantPlannerElement = restaurantPlanner.value;
+      dailyPlannerElement.innerHTML = "";
+      flightPlannerElement.innerHTML = "";
+      restaurantPlannerElement.innerHTML = "";
 
-  messageTypes.forEach((messageType) => {
-    if (messageType === "restaurants") {
-      restaurantMessages.value.forEach((restaurant) => {
-        const listItem = document.createElement("li");
-        listItem.innerText = `Restaurant: ${restaurant.name}, Rating: ${restaurant.rating}, Reviews: ${restaurant.reviews}`;
-        dailyPlannerElement.appendChild(listItem);
+      messageTypes.forEach((messageType) => {
+        if (messageType === "restaurants") {
+          restaurantMessages.value.forEach((restaurant) => {
+            const listItem = document.createElement("li");
+            listItem.innerText = `Restaurant: ${restaurant.name}, Rating: ${restaurant.rating}, Reviews: ${restaurant.reviews}`;
+            dailyPlannerElement.appendChild(listItem);
 
-        // Create clones of listItem for other elements
-        const restaurantListItem = listItem.cloneNode(true);
-        restaurantPlannerElement.appendChild(restaurantListItem);
+            // Create clones of listItem for other elements
+            const restaurantListItem = listItem.cloneNode(true);
+            restaurantPlannerElement.appendChild(restaurantListItem);
+          });
+        } else if (messageType === "flights") {
+          flightMessages.value.forEach((flight) => {
+            const listItem = document.createElement("li");
+            listItem.innerText = `Flight: Departure from ${flight.departure_airport} at ${flight.departure_time}, Arrival at ${flight.arrival_airport} at ${flight.arrival_time}, Price: ${flight.price}`;
+            dailyPlannerElement.appendChild(listItem);
 
-        const flightListItem = listItem.cloneNode(true);
-        flightPlannerElement.appendChild(flightListItem);
+            // Create clones of listItem for other elements
+            const flightListItem = listItem.cloneNode(true);
+            flightPlannerElement.appendChild(flightListItem);
+          });
+        }
       });
-    } else if (messageType === "flights") {
-      flightMessages.value.forEach((flight) => {
-        const listItem = document.createElement("li");
-        listItem.innerText = `Flight: Departure from ${flight.departure_airport} at ${flight.departure_time}, Arrival at ${flight.arrival_airport} at ${flight.arrival_time}, Price: ${flight.price}`;
-        dailyPlannerElement.appendChild(listItem);
+    };
 
-        // Create clones of listItem for other elements
-        const restaurantListItem = listItem.cloneNode(true);
-        restaurantPlannerElement.appendChild(restaurantListItem);
 
-        const flightListItem = listItem.cloneNode(true);
-        flightPlannerElement.appendChild(flightListItem);
-      });
+    function handleMessage(message) {
+      const response = JSON.parse(message.data);
+
+      if (response.type === "restaurants") {
+        console.log('restaurant message', response.restaurants);
+        restaurantMessages.value.push(...response.restaurants);
+      }
+
+      if (response.type === "flights") {
+        console.log('flight message', response.flights);
+        flightMessages.value.push(...response.flights);
+      }
+
+      // updateDailyPlanner
+      updateDailyPlanner(["restaurants", "flights"]);
     }
-  });
-};
-
-
-function handleMessage(message) {
-  const response = JSON.parse(message.data);
-
-  if (response.type === "restaurants") {
-    console.log('restaurant message', response.restaurants);
-    restaurantMessages.value.push(...response.restaurants);
-  }
-
-  if (response.type === "flights") {
-    console.log('flight message', response.flights);
-    flightMessages.value.push(...response.flights);
-  }
-
-  // updateDailyPlanner
-  updateDailyPlanner(["restaurants", "flights"]);
-}
 
 
     const currentQuestion = ref(0);
@@ -132,18 +129,18 @@ function handleMessage(message) {
     // ];
 
     
-    // const questions = ["Start Location?new-york-city-new-york-united-states",
-    // "Destination?los-angeles-california-united-states",
-    // "Start Time?2023-11-28",
-    // "End Time?2023-11-30",
-    // "Number of Traveler?"
-    // ];
-    const questions = ["new-york-city-new-york-united-states",
-    "los-angeles-california-united-states",
-    "2023-11-28",
-    "2023-11-30",
+    const questions = ["Start Location? new-york-city-new-york-united-states",
+    "Destination? los-angeles-california-united-states",
+    "Start Time? 2023-11-28",
+    "End Time? 2023-11-30",
     "Number of Traveler?"
     ];
+    // const questions = ["new-york-city-new-york-united-states",
+    // "los-angeles-california-united-states",
+    // "2023-11-28",
+    // "2023-11-30",
+    // "Number of Traveler?"
+    // ];
     const userResponses = ref([]);
     const userInput = ref("");
 
@@ -183,7 +180,7 @@ function handleMessage(message) {
         // Add user inputs to the Packing List
         userInputs.value.forEach((input, index) => {
           const listItem = document.createElement("li");
-          listItem.innerText = `${input}`;
+          listItem.innerText = `Question ${index+1}: ${questions[index]}\nUser's Answer: ${input}`;
           packingList.value.appendChild(listItem);
         });
         
@@ -206,31 +203,31 @@ function handleMessage(message) {
       scrollToBottom();
     };
 
-      const handleSendRestaurant = () =>{
-        if (ws.readyState===1) {
-            ws.send(JSON.stringify({
-                type: "restaurant",
-                // departure: userInputs[0],
-                destnation: userInputs.value[1]
-                // startdate: userInputs[2],
-                // arrivaldate: userInputs[3],
-                // numtraveler: userInputs[4]
-            }));
-            }
-      }
+    const handleSendRestaurant = () =>{
+      if (ws.readyState===1) {
+          ws.send(JSON.stringify({
+              type: "restaurant",
+              // departure: userInputs[0],
+              destnation: userInputs.value[1]
+              // startdate: userInputs[2],
+              // arrivaldate: userInputs[3],
+              // numtraveler: userInputs[4]
+          }));
+          }
+    }
 
-      const handleSendFlight = () =>{
-        if (ws.readyState===1) {
-            ws.send(JSON.stringify({
-                type: "flight",
-                departure: userInputs.value[0],
-                destnation: userInputs.value[1],
-                startdate: userInputs.value[2]
-                // arrivaldate: userInputs[3],
-                // numtraveler: userInputs[4]
-            }));
-            }
-      }
+    const handleSendFlight = () =>{
+      if (ws.readyState===1) {
+          ws.send(JSON.stringify({
+              type: "flight",
+              departure: userInputs.value[0],
+              destnation: userInputs.value[1],
+              startdate: userInputs.value[2]
+              // arrivaldate: userInputs[3],
+              // numtraveler: userInputs[4]
+          }));
+          }
+    }
 
 
     const displayFinalOutput = () => {
@@ -276,93 +273,99 @@ function handleMessage(message) {
 };
 </script>
 
-
 <style>
-        body {
-            text-align: center;
-        }
+  body {
+    text-align: center;
+  }
 
-        .header {
-            margin-bottom: 20px;
-        }
+  .header {
+    margin-bottom: 30px;
+  }
 
-        .chat-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
-            display: inline-block;
-            text-align: left;
-            width: 400px;
-            height: 400px;
-            overflow-y: auto;
-        }
+  .chat-container {
+    max-width: 100%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    text-align: left;
+    width: 100%;
+    max-width: 1200px;
+    height: 400px;
+    overflow-y: auto;
+  }
+  .messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
 
-        .messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
+  .messages li {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 10px;
+  }
 
-        .messages li {
-            margin-bottom: 10px;
-            padding: 5px;
-            border-radius: 10px;
-        }
-        .bot-message {
-            background-color: #E6E6E6; /* Light gray for bot's messages */
-        }
-        .user-message {
-            background-color: #007AFF; /* Light green for user's messages */
-        }
+  .bot-message {
+    background-color: #E6E6E6;
+  }
 
-        .user-input {
-            width: calc(100% - 20px); /* Set width to match chat container and subtract padding */
-            padding: 5px;
-            box-sizing: border-box; /* Include padding in width calculation */
-        }
+  .user-message {
+    background-color: #007AFF;
+  }
 
-        .input-box {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-            margin-left: 630px;
-            width: 30%; /* Make the input box take full width of the chat container */
-        }
+  .user-input {
+    width: 80%;
+    padding: 5px;
+    box-sizing: border-box;
+  }
 
-        .submit-button, .clear-button {
-            padding: 5px 10px;
-        }
+  .input-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
 
-        .responses {
-            margin-top: 20px;
-            text-align: left;
-        }
-        .daily-planner,
-        .packing-list {
-            width: calc(30% - 20px); /* Adjust width as needed */
-            height: 400px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            margin: 0 10px;
-            overflow-y: auto;
-            display: inline-block;
-            text-align: left;
-        }
+  .submit-button, .clear-button {
+    padding: 5px 10px;
+  }
 
-        h2 {
-            text-align: center;
-        }
+  .responses {
+    margin-top: 20px;
+    text-align: left;
+  }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+  }
 
-        ul li {
-            padding: 5px;
-            border-bottom: 1px solid #ccc;
-        }
-    </style>
+  .daily-planner,
+  .packing-list,
+  .flight-planner,
+  .restaurant-planner {
+    flex: 1;
+    height: 400px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    text-align: left;
+    margin: 5px;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  ul li {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+  }
+</style>
