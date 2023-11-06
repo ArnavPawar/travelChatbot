@@ -132,5 +132,100 @@ def get_restaurant_information():
         "type": "restaurants"
     })
 
+
+@app.route('/api/hotels', methods=['POST'])
+def get_hotels():
+    adults = request.form.get('numtraveler', default=1, type=int)
+    d1 = request.form.get('startdate')
+    d2 = request.form.get('arrivaldate')
+    dest = request.form.get('destnation')
+    
+    url = f'https://www.hotels.com/Hotel-Search?adults={adults}&d1={d1}&d2={d2}&destination={dest}&endDate={d2}&sort=RECOMMENDED&startDate={d1}'
+    
+    driver = webdriver.Chrome()  # You need to set up the webdriver as needed
+    driver.get(url)
+    driver.execute_script('window.scrollBy(0,4000)')
+    sleep(5)
+
+    hotel_rows = driver.find_elements("xpath", ('//*[@data-stid="lodging-card-responsive"]'))
+    hotels = []
+    ratings_h = []
+    prices = []
+    total_prices = []
+    specials = []
+    descriptions = []
+    refundables = []
+    tags_h = []
+    
+    for WebElement in hotel_rows:
+        elementHTML = WebElement.get_attribute('outerHTML')
+        elementSoup = BeautifulSoup(elementHTML, 'html.parser')
+
+        temp_hotel = elementSoup.find("h3", {"class": "uitk-heading uitk-heading-5 overflow-wrap uitk-layout-grid-item uitk-layout-grid-item-has-row-start"})
+        if temp_hotel is None:
+            continue
+        else:
+            hotels.append(temp_hotel.text)
+
+        temp_rating_h = elementSoup.find("span", {"class": "uitk-badge-base-text"})
+        if temp_rating_h is None:
+            ratings_h.append('NaN')
+        else:
+            ratings_h.append(temp_rating_h.text)
+
+        temp_price = elementSoup.find("div", {"class": "uitk-text uitk-type-500 uitk-type-medium uitk-text-emphasis-theme"})
+        if temp_price is None:
+            prices.append('NaN')
+        else:
+            prices.append(temp_price.text)
+
+        temp_total = elementSoup.find("div", {"class": "uitk-text uitk-type-end uitk-type-200 uitk-type-regular uitk-text-default-theme"})
+        if temp_total is None:
+            total_prices.append('NaN')
+        else:
+            total_prices.append(temp_total.text)
+
+        temp_special = elementSoup.find("div", {"class": "uitk-text uitk-type-200 uitk-type-bold uitk-text-default-theme"})
+        if temp_special is None:
+            specials.append('NaN')
+        else:
+            specials.append(temp_special.text)
+
+        temp_description = elementSoup.find("div", {"class": "uitk-text uitk-type-200 uitk-text-default-theme"})
+        if temp_description is None:
+            descriptions.append('NaN')
+        else:
+            descriptions.append(temp_description.text)
+
+        temp_refund = elementSoup.find("div", {"class": "uitk-text uitk-type-300 uitk-text-positive-theme"})
+        if temp_refund is None:
+            refundables.append('NaN')
+        else:
+            refundables.append(temp_refund.text)
+
+        temp_tags_h = elementSoup.find_all("div", {"class": "uitk-text truncate-lines-2 uitk-type-200 uitk-text-default-theme"})
+        tags_text_h = [tag.text for tag in temp_tags_h]
+        tags_h.append(tags_text_h)
+
+    driver.quit()  # Make sure to close the webdriver when done
+
+
+
+    return jsonify({
+        "hotels": [
+            {
+            "hotel_name": hotels[i],
+            "rating": ratings_h[i],
+            "price": prices[i],
+            "total_price": total_prices[i],
+            "special": specials[i],
+            "description": descriptions[i],
+            "refundable": refundables[i],
+            "tags": tags_h[i]
+            } for i in range(10)
+        ],
+        "type": "hotels"
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)

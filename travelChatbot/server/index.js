@@ -51,6 +51,11 @@ const WebSocket = require("ws");
 
             handleMessageRestaurants(parsedMsg);
         }
+        if(parsedMsg.type === "hotel")
+        {
+
+          handleMessageHotels(parsedMsg);
+        }
         return;
     }
 
@@ -107,6 +112,38 @@ const WebSocket = require("ws");
             console.error('Error:', error);
           });
     }
-    
+    function handleMessageHotels(parsedMsg) {
+      // Extract the username from parsedMsg
+      const numtraveler = parsedMsg.numtraveler;
+      const destnation = parsedMsg.destnation;
+      const startdate = parsedMsg.startdate;
+      const arrivaldate = parsedMsg.arrivaldate;
+      // Create a FormData object with the username value
+      const FormData = require('form-data');
+      const formData = new FormData();
+      formData.append('destnation', destnation);
+      formData.append('numtraveler', numtraveler);
+      formData.append('startdate', startdate);
+      formData.append('arrivaldate', arrivaldate);
+      // Make a POST request to the API endpoint
+      const fetch = require('node-fetch');
+      fetch('http://127.0.0.1:5000/api/flights', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Response from backend:', data);
+          server.clients.forEach((c) => {
+            c.send(JSON.stringify(data));
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+  } 
+  
+  
+  
     init();
 })(WebSocket)
