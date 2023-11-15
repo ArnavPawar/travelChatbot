@@ -42,6 +42,11 @@
         <h2>Restaurants</h2>
         <ul ref="restaurantPlanner"></ul>
       </div>
+
+       <div class="daily-planner">
+        <h2>Hotels</h2>
+        <ul ref="hotelPlanner"></ul>
+      </div>
     </div>
   </div>
 </template>
@@ -57,7 +62,8 @@ export default {
     const dailyPlanner = ref(null);
     const flightPlanner = ref(null);
     const restaurantPlanner = ref(null);
-
+    const hotelPlanner = ref(null);
+    const hotelMessages = ref([]);
     const flightMessages = ref([]);
     const restaurantMessages = ref([]);
     const packingList = ref(null);
@@ -66,9 +72,11 @@ export default {
       const dailyPlannerElement = dailyPlanner.value;
       const flightPlannerElement = flightPlanner.value;
       const restaurantPlannerElement = restaurantPlanner.value;
+      const hotelPlannerElement = hotelPlanner.value;
       dailyPlannerElement.innerHTML = "";
       flightPlannerElement.innerHTML = "";
       restaurantPlannerElement.innerHTML = "";
+      hotelPlannerElement.innerHTML = "";
 
       messageTypes.forEach((messageType) => {
         if (messageType === "restaurants") {
@@ -91,6 +99,38 @@ export default {
             const flightListItem = listItem.cloneNode(true);
             flightPlannerElement.appendChild(flightListItem);
           });
+        } else if (messageType === "hotels") {
+          hotelMessages.value.forEach((hotel) => {
+            const listItem = document.createElement("li");
+              listItem.innerText = `Hotel: ${hotel.hotel_name}`;
+              if (hotel.rating !== 'NaN')  {
+                listItem.innerText += `, Rating: ${hotel.rating}`
+              }
+              if (hotel.price !== 'NaN')  {
+                listItem.innerText += `, Price: ${hotel.price}`
+              }
+              if (hotel.total_price !== 'NaN')  {
+                listItem.innerText += `, Total Price: ${hotel.total_price}`
+              }
+              if (hotel.special !== 'NaN')  {
+                listItem.innerText += `, Special: ${hotel.special}`
+              }
+              if (hotel.refundable !== 'NaN')  {
+                listItem.innerText += `, Refundable`
+              }
+              if (hotel.tags !== 'NaN')  {
+                listItem.innerText += `, Tags: ${hotel.tags}`
+              }
+              if (hotel.description !== 'NaN')  {
+                listItem.innerText += `\nDescription: ${hotel.description}`
+              }
+
+            dailyPlannerElement.appendChild(listItem);
+            // Create clones of listItem for other elements
+            const hotelListItem = listItem.cloneNode(true);
+            hotelPlannerElement.appendChild(hotelListItem);
+
+          });
         }
       });
     };
@@ -109,8 +149,12 @@ export default {
         flightMessages.value.push(...response.flights);
       }
 
-      // updateDailyPlanner
-      updateDailyPlanner(["restaurants", "flights"]);
+      if (response.type === "hotels") {
+        console.log('hotels message', response.hotels);
+        hotelMessages.value.push(...response.hotels);
+    }
+
+      updateDailyPlanner(["restaurants", "flights", "hotels"]);
     }
 
 
@@ -229,18 +273,25 @@ export default {
           }
     }
 
+    const handleSendHotel = () => {
+      if (ws.readyState===1) {
+          ws.send(JSON.stringify({
+              type: "hotel",
+              // departure: userInputs.value[0],
+              destnation: userInputs.value[1],
+              startdate: userInputs.value[2],
+              arrivaldate: userInputs.value[3],
+              numtraveler: userInputs.value[4]
+          }));
+          }
+
+    }
 
     const displayFinalOutput = () => {
-      // let finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
-      // userResponses.value.forEach((response, index) => {
-      //   finalOutput += questions[index] + ": " + response + "\n";
-      // });
-      // finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
-      // const finalOutputMessage = document.createElement("li");
-      // finalOutputMessage.innerText = "Bot: " + finalOutput;
-      // messages.value.appendChild(finalOutputMessage);
+
       handleSendRestaurant();
       handleSendFlight();
+      handleSendHotel();
     };
 
     const chatContainer = ref(null);
@@ -263,10 +314,12 @@ export default {
       responses,
       userInputs,
       handleSendRestaurant,
+      handleSendHotel,
       updateDailyPlanner,
       dailyPlanner,
       flightPlanner,
       restaurantPlanner,
+      hotelPlanner,
       packingList,
     };
   },

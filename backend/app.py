@@ -135,7 +135,7 @@ def get_restaurant_information():
 
 @app.route('/api/hotels', methods=['POST'])
 def get_hotels():
-    adults = request.form.get('numtraveler', default=1, type=int)
+    adults = request.form.get('numtraveler')
     d1 = request.form.get('startdate')
     d2 = request.form.get('arrivaldate')
     dest = request.form.get('destnation')

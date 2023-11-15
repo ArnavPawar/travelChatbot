@@ -113,6 +113,7 @@ const WebSocket = require("ws");
           });
     }
     function handleMessageHotels(parsedMsg) {
+      console.log(parsedMsg);
       // Extract the username from parsedMsg
       const numtraveler = parsedMsg.numtraveler;
       const destnation = parsedMsg.destnation;
@@ -127,7 +128,7 @@ const WebSocket = require("ws");
       formData.append('arrivaldate', arrivaldate);
       // Make a POST request to the API endpoint
       const fetch = require('node-fetch');
-      fetch('http://127.0.0.1:5000/api/flights', {
+      fetch('http://127.0.0.1:5000/api/hotels', {
         method: 'POST',
         body: formData
       })
