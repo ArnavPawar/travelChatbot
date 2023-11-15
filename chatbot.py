@@ -1,6 +1,6 @@
 import openai
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 model_name = "gpt-3.5-turbo"
 past_chats = []

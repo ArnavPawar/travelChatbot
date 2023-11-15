@@ -25,7 +25,7 @@ def handle_post_request():
 
 
 import openai
-openai.api_key = "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"
+openai.api_key = "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"
 model_name = "gpt-3.5-turbo"
 
 def chat_with_openai(prompt):
@@ -33,12 +33,10 @@ def chat_with_openai(prompt):
     messages = [{'role': 'system', 'content': 'You are a helpful assistant.'}]
     # Add the current user's message
     messages.append({'role': 'user', 'content': prompt})
-
     # Get a response from OpenAI
     response = openai.ChatCompletion.create(
         model=model_name,
         messages=messages
     )
-
     chatbot_response = response.choices[0].message['content']
     return chatbot_response.strip()

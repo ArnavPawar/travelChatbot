@@ -126,6 +126,21 @@
       <h2>Daily Planner</h2>
       <ul id="dailyPlanner"></ul>
   </div>
+
+    <div class="daily-planner">
+        <h2>Restaurants</h2>
+        <ul id="dailyPlanner"></ul>
+    </div>
+
+    <div class="daily-planner">
+        <h2>Hotels</h2>
+        <ul id="dailyPlanner"></ul>
+    </div>
+
+    <div class="daily-planner">
+        <h2>Budget Breakdown</h2>
+        <ul id="dailyPlanner"></ul>
+    </div>
     <script>
         function scrollToBottom() {
             var chatContainer = document.getElementById("chatContainer");
@@ -196,9 +211,11 @@
                 finalOutput += questions[index] + ": " + response + "\n";
             });
 
-            finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location";
+            finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location. Lastly, can you show an estimated cost of trip.";
 
             var finalOutputMessage = document.createElement("li");
+
+            //need to make separate final output meesage calls to call the bot so that each responce can be for each separate box
 
             finalOutputMessage.innerText = "Bot: " + finalOutput;
 
@@ -210,6 +227,7 @@
                 },
                 body: JSON.stringify({
                     text_prompt: finalOutput
+                    //add multiple things in this so that it can answer questions separatly
                 })
             })
             .then(response => response.json()) // Convert the response to JSON
@@ -218,6 +236,11 @@
                 var arnavMessage = document.createElement("li");
                 arnavMessage.innerText = "Bot: " + arnavString;
                 messagesContainer.appendChild(arnavMessage);
+                // var packingListContainer = document.getElementById("packingList");
+                // var dailyPlannerContainer = document.getElementById("dailyPlanner");
+
+                // packingListContainer.appendChild(finalOutputMessage.cloneNode(true));
+                // dailyPlannerContainer.appendChild(finalOutputMessage.cloneNode(true));
                 scrollToBottom();
             });
             // messagesContainer.appendChild(response.arnav);
