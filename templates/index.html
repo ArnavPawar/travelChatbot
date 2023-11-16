@@ -68,7 +68,10 @@
             text-align: left;
         }
         .daily-planner,
-        .packing-list {
+        .packing-list,
+        .Restaurants,
+        .Hotels,
+        .Budget{
             width: calc(30% - 20px); /* Adjust width as needed */
             height: 400px;
             border: 1px solid #ccc;
@@ -127,19 +130,19 @@
       <ul id="dailyPlanner"></ul>
   </div>
 
-    <div class="daily-planner">
+    <div class="Restaurants">
         <h2>Restaurants</h2>
-        <ul id="dailyPlanner"></ul>
+        <ul id="Restaurants"></ul>
     </div>
 
-    <div class="daily-planner">
+    <div class="Hotels">
         <h2>Hotels</h2>
-        <ul id="dailyPlanner"></ul>
+        <ul id="Hotels"></ul>
     </div>
 
-    <div class="daily-planner">
+    <div class="Budget">
         <h2>Budget Breakdown</h2>
-        <ul id="dailyPlanner"></ul>
+        <ul id="Budget"></ul>
     </div>
     <script>
         function scrollToBottom() {
@@ -211,7 +214,7 @@
                 finalOutput += questions[index] + ": " + response + "\n";
             });
 
-            finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone(do not provide more than 1 itinerary on the output), ONE A packing list, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location. Lastly, can you show an estimated cost of trip.";
+            finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone, A packing list containg items that would be ideal for this trip, after providing a daily activity and packing list provide 10 hotel or Airbnb recommendations for the whole trip with links and lastly 10 recommended restaurant locations for the whole trip based on the given information and location. Lastly, can you show an estimated cost of trip. For each list can you label it: Daily Planner:, Packing List:, Reatruant recommendation:, Hotel recommendation:, and Budget Breakdown:.";
 
             var finalOutputMessage = document.createElement("li");
 
@@ -232,16 +235,59 @@
             })
             .then(response => response.json()) // Convert the response to JSON
             .then(data => {
-                var arnavString = data.trip; // Extract the 'arnav' value from the response
-                var arnavMessage = document.createElement("li");
-                arnavMessage.innerText = "Bot: " + arnavString;
-                messagesContainer.appendChild(arnavMessage);
-                // var packingListContainer = document.getElementById("packingList");
-                // var dailyPlannerContainer = document.getElementById("dailyPlanner");
+                var tripPlan = data.trip; // Extract the  value from the response
+                var dailyPlan = data.DailyPlanne
+                var packList = data.PackList
+                var res = data.Restrant
+                var hotel = data.Hotel
+                var budgetBreakdown = data.Budget
 
-                // packingListContainer.appendChild(finalOutputMessage.cloneNode(true));
-                // dailyPlannerContainer.appendChild(finalOutputMessage.cloneNode(true));
+                console.log(dailyPlan)
+                console.log(packList)
+                console.log(res)
+                console.log(hotel)
+                console.log(budgetBreakdown)
+
+
+                var message = document.createElement("li");
+                // arnavMessage.innerText = "Bot: " + tripPlan;
+                message.innerText = "Bot: The detailed trip can be seen below, please enter more information for more personalized custimization if you are not satisfied with the below reccomendation";
+                //message.innerText = "Bot: "+tripPlan;
                 scrollToBottom();
+
+                messagesContainer.appendChild(message);
+
+                var packingListContainer = document.getElementById("packingList");
+                var dailyPlannerContainer = document.getElementById("dailyPlanner");
+                var ResContainer = document.getElementById("Restaurants");
+                var HotelContainer = document.getElementById("Hotels");
+                var BudgetContainer = document.getElementById("Budget");
+
+                var packingListItem = document.createElement("li");
+                packingListItem.innerText = packList;
+                packingListContainer.appendChild(packingListItem);
+
+                var dailyPlanListItem = document.createElement("li");
+                dailyPlanListItem.innerText = dailyPlan;
+                dailyPlannerContainer.appendChild(dailyPlanListItem);
+
+                var resListItem = document.createElement("li");
+                resListItem.innerText = res;
+                ResContainer.appendChild(resListItem);
+
+                var hotelListItem = document.createElement("li");
+                hotelListItem.innerText = hotel;
+                HotelContainer.appendChild(hotelListItem);
+
+                var budgetListItem = document.createElement("li");
+                budgetListItem.innerText = budgetBreakdown;
+                BudgetContainer.appendChild(budgetListItem);
+                // packingListContainer.appendChild(dailyPlan.cloneNode(true));
+                // dailyPlannerContainer.appendChild(packList);
+                // ResContainer.appendChild(res);
+                // HotelContainer.appendChild(hotel);
+                // BudgetContainer.appendChild(budgetBreakdown);
+
             });
             // messagesContainer.appendChild(response.arnav);
 

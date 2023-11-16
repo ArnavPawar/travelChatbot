@@ -17,7 +17,42 @@ def handle_post_request():
     print("Received data:", text_prompt)  # Print received data to the terminal
     tripPlan=chat_with_openai(text_prompt)
 
-    return jsonify({"response": "Received data: " + text_prompt, "trip": tripPlan})
+    sections = tripPlan.split('\n\n')
+    # print(sections)
+    DailyPlanne = ""
+    PackList = ""
+    Restrant = ""
+    Hotel = ""
+    Budget = ""
+
+    for sec in sections:
+        if sec.startswith("Daily Planner:") or sec.startswith("Day"):
+            DailyPlanne+=sec+"\n"
+            print("PLAN:::"+DailyPlanne)
+        elif sec.startswith("Packing List:"):
+            PackList+=sec+"\n"
+            print("PACK:::"+PackList)
+        elif sec.startswith("Restaurant Recommendations"):
+            Restrant+=sec+"\n"
+            print("RES:::"+Restrant)
+        elif sec.startswith("Hotel Recommendations:"):
+            Hotel+=sec+"\n"
+            print("HOTEL:::"+Hotel)   
+        elif sec.startswith("Budget Breakdown:"):
+            Budget+=sec+"\n"
+            print("BUG:::"+Budget)
+        else:
+            print("NOT ENOUGH INFORAMTION")
+
+    return jsonify({
+        "response": "Received data: " + text_prompt,
+        "trip": tripPlan,
+        "DailyPlanne": DailyPlanne,
+        "PackList": PackList,
+        "Restrant": Restrant,
+        "Hotel": Hotel,
+        "Budget": Budget
+        })
 # @views.route("/profile/<username>")
 # def profile(username):
 #     return render_template("index.html",name=username)
@@ -25,7 +60,7 @@ def handle_post_request():
 
 
 import openai
-openai.api_key = "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"
+openai.api_key = "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"
 model_name = "gpt-3.5-turbo"
 
 def chat_with_openai(prompt):
