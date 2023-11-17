@@ -1,0 +1,91 @@
+
+body {
+    text-align: center;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.chat-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    display: inline-block;
+    text-align: left;
+    width: 400px;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.messages li {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 10px;
+}
+.bot-message {
+    background-color: #E6E6E6; /* Light gray for bot's messages */
+}
+.user-message {
+    background-color: #007AFF; /* Light green for user's messages */
+}
+
+.user-input {
+    width: calc(100% - 20px); /* Set width to match chat container and subtract padding */
+    padding: 5px;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.input-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 630px;
+    width: 30%; /* Make the input box take full width of the chat container */
+}
+
+.submit-button, .clear-button {
+    padding: 5px 10px;
+}
+
+.responses {
+    margin-top: 20px;
+    text-align: left;
+}
+.daily-planner,
+.packing-list,
+.Restaurants,
+.Hotels,
+.Budget{
+    width: calc(30% - 20px); /* Adjust width as needed */
+    height: 400px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    margin: 0 10px;
+    overflow-y: auto;
+    display: inline-block;
+    text-align: left;
+}
+
+h2 {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+}
