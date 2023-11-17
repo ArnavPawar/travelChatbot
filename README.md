@@ -3,7 +3,7 @@ travelChatbot
 
 
 
-For macs to run this code first
+To run this code on WindowsOS:
 
 - pip3 install openai
 - pip3 install flask
