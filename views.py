@@ -16,7 +16,7 @@ class Chatbot:
         response = self.client.chat.completions.create(model=self.model_name,
         messages=messages)
 
-        chatbot_response = response.choices[0].message.content
+        chatbot_response = response.choices[0].message['content']
         
         return chatbot_response.strip()
 
