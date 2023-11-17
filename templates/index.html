@@ -191,6 +191,11 @@
                 displayQuestion();
                 // currentQuestion++;
             } else {
+                var message = document.createElement("li");
+                message.classList.add("bot-message"); // Add bot-message class
+                message.innerText = "Bot: Please wait we are proccessing your information...";
+                messagesContainer.appendChild(message);
+
                 displayFinalOutput(); // If all questions are answered, display final output
             }
 
@@ -250,6 +255,8 @@
 
 
                 var message = document.createElement("li");
+
+                message.classList.add("bot-message"); // Add bot-message class
                 // arnavMessage.innerText = "Bot: " + tripPlan;
                 message.innerText = "Bot: The detailed trip can be seen below, please enter more information for more personalized custimization if you are not satisfied with the below reccomendation";
                 //message.innerText = "Bot: "+tripPlan;
