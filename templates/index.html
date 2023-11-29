@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <title>Plotka The Travel Chatbox</title>
+</head>
+<body>
+    <div class="header">
+        <img
+          src="https://cdn.glitch.global/65ce44cc-ad85-4c7a-b33b-520e8d69ba07/plotka_logo.png?v=1698217756131"
+          class="illustration"
+          alt="Editor illustration"
+          title="Click the image!"
+        />
+    </div>
+  </div>
+  <div class="chat-container" id="chatContainer">
+      <ul class="messages" id="messages"></ul>
+  </div>
+  <div class="input-box">
+      <input type="text" class="user-input" id="userInput" placeholder="Type a message...">
+      <button class="submit-button" onclick="sendMessage()">Submit</button>
+      <button class="clear-button" onclick="clearChat()">Clear Chat</button>
+  </div>
+
+  <div class="responses" id="responses"></div>
+
+  <!-- New box on the right labeled "Packing List" -->
+  <div class="packing-list">
+      <h2>Packing List</h2>
+      <ul id="packingList"></ul>
+  </div>
+
+  <!-- New box on the left labeled "Daily Planner" -->
+  <div class="daily-planner">
+      <h2>Daily Planner</h2>
+      <ul id="dailyPlanner"></ul>
+  </div>
+
+    <div class="Restaurants">
+        <h2>Restaurants</h2>
+        <ul id="Restaurants"></ul>
+    </div>
+
+    <div class="Hotels">
+        <h2>Hotels</h2>
+        <ul id="Hotels"></ul>
+    </div>
+
+    <div class="Budget">
+        <h2>Budget Breakdown</h2>
+        <ul id="Budget"></ul>
+    </div>
+    <script>
+        function scrollToBottom() {
+            var chatContainer = document.getElementById("chatContainer");
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        var currentQuestion = 0;
+        var questions = [
+            "Where would you like to go?",
+            "What city and/or address are you planning on staying?",
+            "What time of month are you going?",
+            "How long are you planning on staying?",
+            "What is your budget range?",
+            "What are some of your interests?",
+            "Where would you like to stay?",
+            "Who and how many people are you staying with?",
+            "What do you have planned already?",
+            "Add any other info that you think is important for the trip?"
+        ];
+
+        var messagesContainer = document.getElementById("messages");
+        var responsesContainer = document.getElementById("responses");
+        var userResponses = [];
+
+        function displayQuestion() {
+            var message = document.createElement("li");
+            message.classList.add("bot-message"); // Add bot-message class
+
+            message.innerText = "Bot: " + questions[currentQuestion];
+            currentQuestion++;
+
+            messagesContainer.appendChild(message);
+        }
+
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            var userMessage = document.createElement("li");
+            userMessage.classList.add("user-message"); // Add user-message class
+
+            userMessage.innerText = "User: " + userInput;
+            messagesContainer.appendChild(userMessage);
+
+            if (currentQuestion < questions.length) {
+                userResponses.push(userInput); // Store user response
+                displayQuestion();
+                // currentQuestion++;
+            } else {
+                var message = document.createElement("li");
+                message.classList.add("bot-message"); // Add bot-message class
+                message.innerText = "Bot: Please wait we are proccessing your information...";
+                messagesContainer.appendChild(message);
+
+                displayFinalOutput(); // If all questions are answered, display final output
+            }
+
+            document.getElementById("userInput").value = "";
+            scrollToBottom();
+        }
+
+        function clearChat() {
+            messagesContainer.innerHTML = "";
+            currentQuestion = 0;
+            userResponses = [];
+            displayQuestion();
+            responsesContainer.innerHTML = ""; // Clear previous responses
+            scrollToBottom();
+        }
+
+        function displayFinalOutput() {
+            var finalOutput = "Can you plan a trip based on all of these questions and answers:\n";
+            
+            userResponses.forEach(function(response, index) {
+                finalOutput += questions[index] + ": " + response + "\n";
+            });
+
+            finalOutput += "Also can you plan this trip in this order: ONLY 1 Daily schedule with links for each activity and an estimated price for the activity for everyone, A packing list containg items that would be ideal for this trip, after providing a daily activity and packing list provide EXACTLY 10 hotel or Airbnb recommendations for the whole trip with links and lastly EXACTLY 10 recommended restaurant locations for the whole trip based on the given information and location. Lastly, can you show an estimated cost of trip. For each list can you label it: Daily Planner:, Packing List:, Reatruant recommendation:, Hotel recommendation:, and Budget Breakdown:.";
+
+            var finalOutputMessage = document.createElement("li");
+
+            //need to make separate final output meesage calls to call the bot so that each responce can be for each separate box
+
+            finalOutputMessage.innerText = "Bot: " + finalOutput;
+
+
+            response = fetch('/', { // Change the endpoint to request text
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text_prompt: finalOutput
+                    //add multiple things in this so that it can answer questions separatly
+                })
+            })
+            .then(response => response.json()) // Convert the response to JSON
+            .then(data => {
+                var tripPlan = data.trip; // Extract the  value from the response
+                var dailyPlan = data.DailyPlanne
+                var packList = data.PackList
+                var res = data.Restrant
+                var hotel = data.Hotel
+                var budgetBreakdown = data.Budget
+
+                console.log(dailyPlan)
+                console.log(packList)
+                console.log(res)
+                console.log(hotel)
+                console.log(budgetBreakdown)
+
+
+                var message = document.createElement("li");
+                // arnavMessage.innerText = "Bot: " + tripPlan;
+                message.innerText = "Bot: The detailed trip can be seen below, please enter more information for more personalized custimization if you are not satisfied with the below reccomendation";
+                //message.innerText = "Bot: "+tripPlan;
+                scrollToBottom();
+
+                messagesContainer.appendChild(message);
+
+                var packingListContainer = document.getElementById("packingList");
+                var dailyPlannerContainer = document.getElementById("dailyPlanner");
+                var ResContainer = document.getElementById("Restaurants");
+                var HotelContainer = document.getElementById("Hotels");
+                var BudgetContainer = document.getElementById("Budget");
+
+                var packingListItem = document.createElement("li");
+                packingListItem.innerText = packList;
+                packingListContainer.appendChild(packingListItem);
+
+                var dailyPlanListItem = document.createElement("li");
+                dailyPlanListItem.innerText = dailyPlan;
+                dailyPlannerContainer.appendChild(dailyPlanListItem);
+
+                var resListItem = document.createElement("li");
+                resListItem.innerText = res;
+                ResContainer.appendChild(resListItem);
+
+                var hotelListItem = document.createElement("li");
+                hotelListItem.innerText = hotel;
+                HotelContainer.appendChild(hotelListItem);
+
+                var budgetListItem = document.createElement("li");
+                budgetListItem.innerText = budgetBreakdown;
+                BudgetContainer.appendChild(budgetListItem);
+                // packingListContainer.appendChild(dailyPlan.cloneNode(true));
+                // dailyPlannerContainer.appendChild(packList);
+                // ResContainer.appendChild(res);
+                // HotelContainer.appendChild(hotel);
+                // BudgetContainer.appendChild(budgetBreakdown);
+
+            });
+            // messagesContainer.appendChild(response.arnav);
+
+        }
+
+        document.getElementById("userInput").addEventListener("keydown", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        displayQuestion(); // Display first question on page load
+      </script>
+</body>
+</html>
