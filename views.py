@@ -44,7 +44,7 @@ class Hotel:
 
 class Restaurant:
     def __init__(self):
-        self.resturantList = ""
+        self.restaurantList = ""
 
     def setRestaurantList(self, newRestaurantList):
         self.restaurantList = newRestaurantList
@@ -105,7 +105,7 @@ def handle_post_request():
             packingList_1.setPackList(newPackList)
             print("PACK:::"+packingList_1.packList)
         elif sec.startswith("Restaurant Recommendations"):
-            newRestaurantList = restaurant_1.resturantList + sec + "\n"
+            newRestaurantList = restaurant_1.restaurantList + sec + "\n"
             restaurant_1.setRestaurantList(newRestaurantList)
             print("RES:::"+restaurant_1.restaurantList)
         elif sec.startswith("Hotel Recommendations"):
