@@ -6,7 +6,8 @@ To run this code on Windows Or Mac:
 *NOTE*
 when running this code take our api key from the document submission as we cant publicy have this visible in our github. 
 once you have this code go into *views.py line 98*
-
+/n
+\n
 *NOTE*
 If on mac you have to change the import on top of views.py to what is labeled in the comments
 
