@@ -1,47 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from openai import OpenAI
 #for mac
-#import openai
-
-# Defining the classes for each feature and ways to access them
-class DailyPlanner:
-    def __init__(self):
-        self.dailyPlan = ""
-
-    def setDailyPlan(self, newDailyPlan):
-        self.dailyPlan = newDailyPlan
-    
-
-class PackingList:
-    def __init__(self):
-        self.packList = ""
-
-    def setPackList(self, newPackList):
-        self.packList = newPackList
-
-
-class Hotel:
-    def __init__(self):
-        self.hotelList = ""
-
-    def setHotelList(self, newHotelList):
-        self.hotelList = newHotelList
-
-
-class Restaurant:
-    def __init__(self):
-        self.restaurantList = ""
-
-    def setRestaurantList(self, newRestaurantList):
-        self.restaurantList = newRestaurantList
-
-
-class Budget:
-    def __init__(self):
-        self.budgetList = ""
-
-    def setBudget(self, newBudgetList):
-        self.budgetList = newBudgetList
+# import openai
 
 
 # Defining the chabotbot class and its message collecting system
@@ -74,6 +34,54 @@ class Chatbot:
 
         return dailyPlanner_1, packingList_1, hotel_1, restaurant_1, budget_1
 
+# Defining the classes for each feature and ways to access them
+class DailyPlanner(Chatbot):
+    dailyPlan=""
+    def __init__(self):
+        self.dailyPlan = ""
+
+    def setDailyPlan(self, newDailyPlan):
+        self.dailyPlan = newDailyPlan
+    
+    def getPackList():
+        return dailyPlan
+    
+
+class PackingList(Chatbot):
+    packList=""
+    def __init__(self):
+        self.packList = ""
+
+    def setPackList(self, newPackList):
+        self.packList = newPackList
+
+
+class Hotel(Chatbot):
+    hotelList=""
+    def __init__(self):
+        self.hotelList = ""
+
+    def setHotelList(self, newHotelList):
+        self.hotelList = newHotelList
+
+
+class Restaurant(Chatbot):
+    restaurantList=""
+    def __init__(self):
+        self.restaurantList = ""
+
+    def setRestaurantList(self, newRestaurantList):
+        self.restaurantList = newRestaurantList
+
+
+class Budget(Chatbot):
+    budgetList=""
+    def __init__(self):
+        self.budgetList = ""
+
+    def setBudget(self, newBudgetList):
+        self.budgetList = newBudgetList
+
 
 views = Blueprint(__name__, "views")
 
@@ -81,9 +89,6 @@ views = Blueprint(__name__, "views")
 @views.route("/")
 def home():
     return render_template("index.html")
-
-
-
 
 # Extracts text prompts
 @views.route("/", methods=["GET", "POST"])
@@ -97,7 +102,7 @@ def handle_post_request():
     print("Received data:", text_prompt) 
 
     # Creates chatbot object
-    client = OpenAI(api_key="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")
+    client = OpenAI(api_key="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")
     model_name = "gpt-3.5-turbo"
     chatbot_1 = Chatbot(model_name, client)
 
