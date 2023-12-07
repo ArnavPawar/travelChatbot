@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from openai import OpenAI
+#for mac
 #import openai
 
 # Defining the classes for each feature and ways to access them
