@@ -3,7 +3,7 @@ travelChatbot
 
 To run this code on Windows Or Mac:
 
-*NOTE*
+*NOTE* 
 when running this code take our api key from the document submission as we cant publicy have this visible in our github. 
 once you have this code go into *views.py line 98*
 
