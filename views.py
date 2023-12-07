@@ -1,8 +1,49 @@
 from flask import Blueprint, render_template, request, jsonify
 from openai import OpenAI
-#for mac do this
 #import openai
 
+# Defining the classes for each feature and ways to access them
+class DailyPlanner:
+    def __init__(self):
+        self.dailyPlan = ""
+
+    def setDailyPlan(self, newDailyPlan):
+        self.dailyPlan = newDailyPlan
+    
+
+class PackingList:
+    def __init__(self):
+        self.packList = ""
+
+    def setPackList(self, newPackList):
+        self.packList = newPackList
+
+
+class Hotel:
+    def __init__(self):
+        self.hotelList = ""
+
+    def setHotelList(self, newHotelList):
+        self.hotelList = newHotelList
+
+
+class Restaurant:
+    def __init__(self):
+        self.restaurantList = ""
+
+    def setRestaurantList(self, newRestaurantList):
+        self.restaurantList = newRestaurantList
+
+
+class Budget:
+    def __init__(self):
+        self.budgetList = ""
+
+    def setBudget(self, newBudgetList):
+        self.budgetList = newBudgetList
+
+
+# Defining the chabotbot class and its message collecting system
 class Chatbot:
     def __init__(self, model_name, client):
         self.model_name = model_name
@@ -32,49 +73,6 @@ class Chatbot:
 
         return dailyPlanner_1, packingList_1, hotel_1, restaurant_1, budget_1
 
-# Defining the classes for each feature and ways to access them
-class DailyPlanner(Chatbot):
-    def __init__(self):
-        self.dailyPlan = ""
-
-    def setDailyPlan(self, newDailyPlan):
-        self.dailyPlan = newDailyPlan
-    
-
-class PackingList(Chatbot):
-    def __init__(self):
-        self.packList = ""
-
-    def setPackList(self, newPackList):
-        self.packList = newPackList
-
-
-class Hotel(Chatbot):
-    def __init__(self):
-        self.hotelList = ""
-
-    def setHotelList(self, newHotelList):
-        self.hotelList = newHotelList
-
-
-class Restaurant(Chatbot):
-    def __init__(self):
-        self.restaurantList = ""
-
-    def setRestaurantList(self, newRestaurantList):
-        self.restaurantList = newRestaurantList
-
-
-class Budget(Chatbot):
-    def __init__(self):
-        self.budgetList = ""
-
-    def setBudget(self, newBudgetList):
-        self.budgetList = newBudgetList
-
-
-# Defining the chabotbot class and its message collecting system
-
 
 views = Blueprint(__name__, "views")
 
@@ -101,3 +99,47 @@ def handle_post_request():
     client = OpenAI(api_key="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")
     model_name = "gpt-3.5-turbo"
     chatbot_1 = Chatbot(model_name, client)
+
+    tripPlan=chatbot_1.chat_with_openai(text_prompt)
+
+    dailyPlanner_1, packingList_1, hotel_1, restaurant_1, budget_1 = chatbot_1.factory()
+
+    sections = tripPlan.split('\n\n')
+    
+    
+
+    # Everytime a new portion for each section is created
+    # It is added to it's respective object
+    for sec in sections:
+        if sec.startswith("Daily Planner:") or sec.startswith("Day"):
+            newPlan = dailyPlanner_1.dailyPlan + sec + "\n"
+            dailyPlanner_1.setDailyPlan(newPlan)
+            print("PLAN:::"+dailyPlanner_1.dailyPlan)
+        elif sec.startswith("Packing List"):
+            newPackList = packingList_1.packList + sec + "\n"
+            packingList_1.setPackList(newPackList)
+            print("PACK:::"+packingList_1.packList)
+        elif sec.startswith("Restaurant Recommendations"):
+            newRestaurantList = restaurant_1.restaurantList + sec + "\n"
+            restaurant_1.setRestaurantList(newRestaurantList)
+            print("RES:::"+restaurant_1.restaurantList)
+        elif sec.startswith("Hotel Recommendations"):
+            newHotelList = hotel_1.hotelList + sec + "\n"
+            hotel_1.setHotelList(newHotelList)
+            print("HOTEL:::"+hotel_1.hotelList)   
+        elif sec.startswith("Budget Breakdown"):
+            newBudgetList = budget_1.budgetList + sec + "\n"
+            budget_1.setBudget(newBudgetList)
+            print("BUG:::"+budget_1.budgetList)
+        else:
+            print("NOT ENOUGH INFORAMTION")
+
+    return jsonify({
+        "response": "Received data: " + text_prompt,
+        "trip": tripPlan,
+        "DailyPlanne": dailyPlanner_1.dailyPlan,
+        "PackList": packingList_1.packList,
+        "Restrant": restaurant_1.restaurantList,
+        "Hotel": hotel_1.hotelList,
+        "Budget": budget_1.budgetList
+        })
