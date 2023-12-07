@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from openai import OpenAI
+#for mac do this
+#import openai
 
 class Chatbot:
     def __init__(self, model_name, client):
