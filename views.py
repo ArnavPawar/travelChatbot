@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
-from openai import OpenAI
+# from openai import OpenAI
 #for mac
-# import openai
+import openai
 
 
 # Defining the chabotbot class and its message collecting system
@@ -102,7 +102,7 @@ def handle_post_request():
     print("Received data:", text_prompt) 
 
     # Creates chatbot object
-    client = OpenAI(api_key="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")
+    client = openai(api_key="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")
     model_name = "gpt-3.5-turbo"
     chatbot_1 = Chatbot(model_name, client)
 
